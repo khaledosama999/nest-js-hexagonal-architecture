@@ -1,0 +1,2 @@
+POST https://localhost:3000/account:sendmoney
+
