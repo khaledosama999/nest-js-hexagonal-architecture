@@ -423,6 +423,37 @@ describe('Account Arch test', () => {
 
 You can use whatever way that suits your project, but one way is having automated tests to check package imports, for example currently our domain code doesn't have any imports, same for ou application services, they should'nt depend on any external adapters.
 
+### Taking short-cuts
+Best case scenario we allows stick to the guidelines of our architecture, but some times short-cuts are needed as long as we are making them **consciously**.
+
+#### Sharing models
+In some use cases/services a command could be shared between use cases, and even output models, this is valid if the use cases are functionally bound, an example for us would be our use case for sending money, and revoking sending money,
+
+As long as we don't see a need for each use case to evolve separately, sharing models if fine, once we see a divergence, we can start splitting the models.
+
+#### Using entity domain models as input
+We could be tempted to add an entity model as input for a use case, or even persistence layer.
+This gives our entity model another reason to change, in some use cases we might be tempted to add another field that's needed by a single use case, although it should be saved in another domain entity for example.
+
+This shortcut is usually valid in simple use case, where we are creating/updating some fields, in most complex uses cases we would usually need a unique command/query for the use cases.
+
+#### Skipping in ports
+although we definitely need out ports, to invert the dependency direction, in ports if skipped the dependency direction would still be from external adapters to our domain code.
+
+The added benefits is it's easy to onboard new developers, you can tell from in coming ports straight away what interfaces (use cases) are callable by external adapters.
+
+They can also be used to enforce architecture rules as we did using ts Arch, that in adapters only import in ports.
+
+#### Skipping use cases
+We can be tempted to have our out adapter (persistence layer) to implement the in port, and skip using the use cases.
+
+Since our in ports ony deal with domain entity models, persistence layer will most likely accept entity models as input.
+As well this might have a worse effect, of having **domain logic** inside our persistence layer instead of the application layer, (be wary that persistence layer could change, which would require us to re-write our domain logic).
+
+This might be a valid short-cut if the use case only forwards the input to the persistence layer.
+
+
+Most importantly when it comes to taking short-cuts is to document that this was a conscious decision, and explain the reasons why it's valid.
 
 ## References
 - Hexagonal Software Architecture for Web Applications course on educative.io
